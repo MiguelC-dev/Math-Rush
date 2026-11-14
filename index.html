@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Math Rush — Aventura Matemática Medieval</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=MedievalSharp&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="game-wrapper">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD DURANTE O JOGO -->
+    <div id="hud-layer" class="hidden">
+        <div class="hud-top-bar">
+            <div class="hud-stat" id="hud-score">⚔️ Pontos: 0</div>
+            <div class="hud-region-tag" id="hud-region">Catacumbas</div>
+            <div class="hud-stat" id="hud-lives">❤️❤️❤️</div>
+            <div class="hud-stat" id="hud-timer">⏳ 15s</div>
+            <button id="btn-audio-toggle" title="Alternar Som">🔊 Som</button>
+        </div>
+
+        <!-- Painel da Pergunta -->
+        <div id="question-banner">
+            <div id="challenge-indicator" class="challenge-badge hidden">⚠️ Desafio Especial — 5 Portas</div>
+            <div id="question-text">12 + 8 = ?</div>
+        </div>
+    </div>
+
+    <!-- MODO DE TESTE (BARRA SUPERIOR) -->
+    <div id="test-controls" class="hidden">
+        <span id="test-region-label">Visualizando: Catacumbas</span>
+        <button id="btn-test-back" class="btn-mini">Voltar ao Menu</button>
+    </div>
+
+    <!-- MENU PRINCIPAL -->
+    <div id="main-menu" class="overlay-screen">
+        <h1 class="game-logo">MATH RUSH</h1>
+        <p class="game-subtitle">Aventura Matemática nas Masmorras Medievais</p>
+        <div class="medieval-panel">
+            <div class="record-badge" id="menu-highscore">🏆 Recorde Pessoal: 0 pts</div>
+            <button id="btn-start" class="btn-medieval">⚔️ Iniciar Aventura</button>
+            <button id="btn-open-test" class="btn-medieval stone-btn">🗺️ Testar Mapas e Final</button>
+        </div>
+    </div>
+
+    <!-- MENU DE TESTE DE MAPAS -->
+    <div id="test-menu" class="overlay-screen hidden">
+        <h2 class="game-logo" style="font-size: clamp(1.8rem, 5vw, 3rem);">Explorar Regiões</h2>
+        <p class="game-subtitle">Inspecione os cenários sem alterar seu recorde</p>
+        <div class="medieval-panel">
+            <div class="test-grid">
+                <button class="btn-medieval stone-btn" data-test="0">1. Catacumbas (0 - 899)</button>
+                <button class="btn-medieval stone-btn" data-test="1">2. Templo Abandonado (1.000 - 1.899)</button>
+                <button class="btn-medieval stone-btn" data-test="2">3. Caverna dos Cristais (2.000 - 2.899)</button>
+                <button class="btn-medieval stone-btn" data-test="3">4. Fortaleza Vulcânica (3.000 - 3.899)</button>
+                <button class="btn-medieval stone-btn" data-test="4">5. Santuário Final (4.000 - 4.899)</button>
+                <button class="btn-medieval royal-btn" data-test="victory">👑 Testar Sequência Final de Vitória</button>
+            </div>
+            <button id="btn-test-menu-back" class="btn-medieval">Voltar ao Menu</button>
+        </div>
+    </div>
+
+    <!-- TELA FINAL (GAME OVER / VITÓRIA) -->
+    <div id="end-screen" class="overlay-screen hidden">
+        <div class="medieval-panel" style="width: 500px;">
+            <h2 class="end-title" id="end-title">GAME OVER</h2>
+            <p class="end-subtitle" id="end-subtitle">Sua jornada nas masmorras chegou ao fim.</p>
+            <div class="end-score-box" id="end-score">0 PONTOS</div>
+            <button id="btn-end-menu" class="btn-medieval">Voltar ao Menu Principal</button>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/audio.js"></script>
+<script src="js/questions.js"></script>
+<script src="js/maps.js"></script>
+<script src="js/doors.js"></script>
+<script src="js/player.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
