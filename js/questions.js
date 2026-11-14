@@ -6,7 +6,6 @@ class MathQuestionGenerator {
     static createQuestion(score) {
         const tier = Math.floor(score / 1000);
 
-        // Desafios Especiais de 5 Portas nos Marcos de Transição
         if (this.isSpecialScore(score)) {
             if (score <= 1900) {
                 const isMult = Math.random() < 0.5;
@@ -20,7 +19,6 @@ class MathQuestionGenerator {
                     return { text: `${divisor * quotient} ÷ ${divisor} = ?`, answer: quotient };
                 }
             } else {
-                // Expressões combinadas nas fases avançadas
                 const multA = tier === 2 ? this.randInt(6, 10) : tier === 3 ? this.randInt(8, 12) : this.randInt(9, 14);
                 const multB = tier === 2 ? this.randInt(4, 7) : tier === 3 ? this.randInt(5, 8) : this.randInt(6, 9);
                 const product = multA * multB;
@@ -36,7 +34,6 @@ class MathQuestionGenerator {
             }
         }
 
-        // Perguntas Padrão (3 Portas) com Dificuldade Progressiva
         let pool = ['+', '-'];
         if (score >= 300) pool.push('*');
         if (score >= 600) pool.push('/');

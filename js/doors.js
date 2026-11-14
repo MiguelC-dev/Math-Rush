@@ -39,7 +39,7 @@ class DoorSystem {
         });
     }
 
-    draw(ctx, region) {
+    draw(ctx) {
         this.doors.forEach(d => {
             ctx.save();
             const sx = d.shakeTimer > 0 ? Math.sin(d.shakeTimer * 50) * 6 : 0;

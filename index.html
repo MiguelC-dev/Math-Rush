@@ -13,7 +13,7 @@
 <div id="game-wrapper">
     <canvas id="gameCanvas"></canvas>
 
-    <!-- HUD DURANTE O JOGO -->
+    <!-- HUD DA PARTIDA -->
     <div id="hud-layer" class="hidden">
         <div class="hud-top-bar">
             <div class="hud-stat" id="hud-score">⚔️ Pontos: 0</div>
@@ -23,14 +23,13 @@
             <button id="btn-audio-toggle" title="Alternar Som">🔊 Som</button>
         </div>
 
-        <!-- Painel da Pergunta -->
         <div id="question-banner">
             <div id="challenge-indicator" class="challenge-badge hidden">⚠️ Desafio Especial — 5 Portas</div>
             <div id="question-text">12 + 8 = ?</div>
         </div>
     </div>
 
-    <!-- MODO DE TESTE (BARRA SUPERIOR) -->
+    <!-- MODO DE TESTE -->
     <div id="test-controls" class="hidden">
         <span id="test-region-label">Visualizando: Catacumbas</span>
         <button id="btn-test-back" class="btn-mini">Voltar ao Menu</button>
@@ -64,7 +63,7 @@
         </div>
     </div>
 
-    <!-- TELA FINAL (GAME OVER / VITÓRIA) -->
+    <!-- TELA FINAL -->
     <div id="end-screen" class="overlay-screen hidden">
         <div class="medieval-panel" style="width: 500px;">
             <h2 class="end-title" id="end-title">GAME OVER</h2>
@@ -75,7 +74,7 @@
     </div>
 </div>
 
-<!-- Scripts -->
+<!-- SCRIPTS MODULARES -->
 <script src="js/audio.js"></script>
 <script src="js/questions.js"></script>
 <script src="js/maps.js"></script>
