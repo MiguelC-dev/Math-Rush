@@ -7,13 +7,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=MedievalSharp&display=swap" rel="stylesheet">
+    <!-- Estilos separados -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div id="game-wrapper">
     <canvas id="gameCanvas"></canvas>
 
-    <!-- HUD DA PARTIDA -->
+    <!-- HUD DURANTE O JOGO -->
     <div id="hud-layer" class="hidden">
         <div class="hud-top-bar">
             <div class="hud-stat" id="hud-score">⚔️ Pontos: 0</div>
@@ -23,13 +24,14 @@
             <button id="btn-audio-toggle" title="Alternar Som">🔊 Som</button>
         </div>
 
+        <!-- Painel de Perguntas posicionado dinamicamente abaixo das portas -->
         <div id="question-banner">
             <div id="challenge-indicator" class="challenge-badge hidden">⚠️ Desafio Especial — 5 Portas</div>
             <div id="question-text">12 + 8 = ?</div>
         </div>
     </div>
 
-    <!-- MODO DE TESTE -->
+    <!-- BARRA SUPERIOR DO MODO DE TESTE -->
     <div id="test-controls" class="hidden">
         <span id="test-region-label">Visualizando: Catacumbas</span>
         <button id="btn-test-back" class="btn-mini">Voltar ao Menu</button>
@@ -46,7 +48,7 @@
         </div>
     </div>
 
-    <!-- MENU DE TESTE DE MAPAS -->
+    <!-- MENU DE SELEÇÃO DO MODO DE TESTE -->
     <div id="test-menu" class="overlay-screen hidden">
         <h2 class="game-logo" style="font-size: clamp(1.8rem, 5vw, 3rem);">Explorar Regiões</h2>
         <p class="game-subtitle">Inspecione os cenários sem alterar seu recorde</p>
@@ -63,7 +65,7 @@
         </div>
     </div>
 
-    <!-- TELA FINAL -->
+    <!-- TELA DE FIM DE JOGO / VITÓRIA -->
     <div id="end-screen" class="overlay-screen hidden">
         <div class="medieval-panel" style="width: 500px;">
             <h2 class="end-title" id="end-title">GAME OVER</h2>
@@ -74,12 +76,12 @@
     </div>
 </div>
 
-<!-- SCRIPTS MODULARES -->
+<!-- Scripts separados por responsabilidade -->
 <script src="js/audio.js"></script>
 <script src="js/questions.js"></script>
-<script src="js/maps.js"></script>
+<script src="js/renderer.js"></script>
 <script src="js/doors.js"></script>
 <script src="js/player.js"></script>
-<script src="js/game.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
