@@ -1,342 +1,420 @@
+/* Variáveis globais de cores da paleta medieval */
 :root {
---gold-light: #f7d98c;
---gold-mid: #c89d4c;
---gold-dark: #7a5722;
---wood-light: #6e4526;
---wood-dark: #362010;
---stone-dark: #1c181d;
---parchment: #e9dcc2;
+    --gold-light: #f7d98c;
+    --gold-mid: #c89d4c;
+    --gold-dark: #7a5722;
+    --wood-light: #6e4526;
+    --wood-dark: #362010;
+    --stone-dark: #1c181d;
+    --parchment: #e9dcc2;
 }
 
- * {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
--webkit-tap-highlight-color: transparent;
+/* Reset básico e bloqueio de seleção/zoom acidental no toque */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
+/* Configuração de tela cheia com suporte a navegadores mobile (100dvh) */
 body, html {
-width: 100%;
-height: 100%;
-overflow: hidden;
-background-color: #0d0a0f;
-font-family: 'Cinzel', Georgia, serif;
-color: var(--parchment);
-user-select: none;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: #0d0a0f;
+    font-family: 'Cinzel', Georgia, serif;
+    color: var(--parchment);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation; /* Remove atraso de toque no mobile */
 }
 
+/* Container principal do jogo */
 #game-wrapper {
-position: relative;
-width: 100vw;
-height: 100vh;
-overflow: hidden;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
 }
 
+/* Canvas do jogo (touch-action: none evita arrastar/rolar a tela no celular) */
 canvas {
-display: block;
-width: 100%;
-height: 100%;
-image-rendering: pixelated;
-image-rendering: crisp-edges;
-cursor: pointer;
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    cursor: pointer;
+    touch-action: none;
 }
 
+/* --------------------------------------------------------------------------
+ * OVERLAYS E TELAS DE INTERFACE (MENU, TESTES, FIM DE JOGO)
+ * -------------------------------------------------------------------------- */
 .overlay-screen {
-position: absolute;
-inset: 0;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-background: radial-gradient(circle at center, rgba(16, 11, 18, 0.55) 0%, rgba(8, 5, 10, 0.88) 100%);
-z-index: 20;
-padding: 20px;
-transition: opacity 0.4s ease;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, rgba(16, 11, 18, 0.55) 0%, rgba(8, 5, 10, 0.88) 100%);
+    z-index: 20;
+    padding: 16px;
+    transition: opacity 0.4s ease;
+    overflow-y: auto; /* Permite rolar caso a tela do celular seja muito baixa */
 }
 
 .hidden {
-display: none !important;
+    display: none !important;
 }
 
+/* Painel com moldura de pedra / placa medieval */
 .medieval-panel {
-background: linear-gradient(180deg, #2a1d17 0%, #1a110d 100%);
-border: 4px solid var(--gold-mid);
-box-shadow: inset 0 0 0 3px #3d2718, inset 0 0 25px rgba(0, 0, 0, 0.85), 0 14px 35px rgba(0, 0, 0, 0.9);
-border-radius: 10px;
-padding: 28px 36px;
-max-width: 92vw;
-width: 440px;
-text-align: center;
-position: relative;
+    background: linear-gradient(180deg, #2a1d17 0%, #1a110d 100%);
+    border: 4px solid var(--gold-mid);
+    box-shadow:
+        inset 0 0 0 3px #3d2718,
+        inset 0 0 25px rgba(0, 0, 0, 0.85),
+        0 14px 35px rgba(0, 0, 0, 0.9);
+    border-radius: 10px;
+    padding: 24px 28px;
+    max-width: 94vw;
+    width: 440px;
+    text-align: center;
+    position: relative;
 }
 
-.medieval-panel::before, .medieval-panel::after {
-content: '❖';
-position: absolute;
-color: var(--gold-light);
-font-size: 1.1rem;
-top: 8px;
+/* Ornamentos nos cantos superiores do painel */
+.medieval-panel::before,
+.medieval-panel::after {
+    content: '❖';
+    position: absolute;
+    color: var(--gold-light);
+    font-size: 1.1rem;
+    top: 8px;
 }
 .medieval-panel::before { left: 12px; }
 .medieval-panel::after { right: 12px; }
 
+/* Logotipo principal */
 .game-logo {
-font-family: 'Cinzel', serif;
-font-weight: 900;
-font-size: clamp(2.4rem, 7vw, 4.4rem);
-color: var(--gold-light);
-text-shadow: 0 3px 0 #4a2a0b, 0 6px 0 #241204, 0 0 28px rgba(247, 217, 140, 0.45);
-letter-spacing: 4px;
-margin-bottom: 6px;
-text-align: center;
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: clamp(2.2rem, 7vw, 4.4rem);
+    color: var(--gold-light);
+    text-shadow:
+        0 3px 0 #4a2a0b,
+        0 6px 0 #241204,
+        0 0 28px rgba(247, 217, 140, 0.45);
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+    text-align: center;
 }
 
+/* Subtítulo temático */
 .game-subtitle {
-font-family: 'MedievalSharp', cursive;
-font-size: clamp(1rem, 3vw, 1.35rem);
-color: #d4bfa0;
-letter-spacing: 2px;
-margin-bottom: 24px;
-text-shadow: 2px 2px 4px #000;
-text-align: center;
+    font-family: 'MedievalSharp', cursive;
+    font-size: clamp(0.95rem, 3vw, 1.35rem);
+    color: #d4bfa0;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px #000;
+    text-align: center;
 }
 
+/* Badge de recorde pessoal */
 .record-badge {
-display: inline-block;
-background: rgba(0, 0, 0, 0.55);
-border: 2px solid var(--gold-dark);
-border-radius: 6px;
-padding: 8px 20px;
-margin-bottom: 20px;
-font-size: 1.05rem;
-font-weight: 700;
-color: var(--gold-light);
-letter-spacing: 1px;
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.55);
+    border: 2px solid var(--gold-dark);
+    border-radius: 6px;
+    padding: 8px 18px;
+    margin-bottom: 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 1px;
 }
 
+/* Botão padrão medieval */
 .btn-medieval {
-display: block;
-width: 100%;
-background: linear-gradient(180deg, #7c4f2b 0%, #4d2d14 55%, #381f0c 100%);
-color: var(--gold-light);
-border: 3px solid var(--gold-mid);
-border-radius: 8px;
-padding: 14px 20px;
-margin: 10px 0;
-font-family: 'Cinzel', serif;
-font-size: clamp(0.95rem, 2.8vw, 1.15rem);
-font-weight: 700;
-letter-spacing: 1.5px;
-cursor: pointer;
-box-shadow: inset 0 1px 0 rgba(255, 235, 180, 0.35), 0 5px 0 #1f1006, 0 8px 16px rgba(0, 0, 0, 0.75);
-transition: transform 0.1s ease, filter 0.15s ease;
-text-transform: uppercase;
+    display: block;
+    width: 100%;
+    background: linear-gradient(180deg, #7c4f2b 0%, #4d2d14 55%, #381f0c 100%);
+    color: var(--gold-light);
+    border: 3px solid var(--gold-mid);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.9rem, 2.8vw, 1.15rem);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 235, 180, 0.35),
+        0 5px 0 #1f1006,
+        0 8px 16px rgba(0, 0, 0, 0.75);
+    transition: transform 0.1s ease, filter 0.15s ease;
+    text-transform: uppercase;
 }
 
 .btn-medieval:hover {
-filter: brightness(1.15);
-transform: translateY(-2px);
+    filter: brightness(1.15);
+    transform: translateY(-2px);
 }
 
 .btn-medieval:active {
-transform: translateY(3px);
-box-shadow: inset 0 1px 0 rgba(255, 235, 180, 0.2), 0 2px 0 #1f1006, 0 4px 8px rgba(0, 0, 0, 0.7);
+    transform: translateY(3px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 235, 180, 0.2),
+        0 2px 0 #1f1006,
+        0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
+/* Variação botão de pedra */
 .btn-medieval.stone-btn {
-background: linear-gradient(180deg, #433c47 0%, #29242c 100%);
-border-color: #8c8294;
-color: #e4dce8;
+    background: linear-gradient(180deg, #433c47 0%, #29242c 100%);
+    border-color: #8c8294;
+    color: #e4dce8;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 5px 0 #141116,
+        0 8px 16px rgba(0, 0, 0, 0.75);
 }
 
+/* Variação botão real/vermelho */
 .btn-medieval.royal-btn {
-background: linear-gradient(180deg, #8a2c2c 0%, #521515 100%);
-border-color: #e09f5a;
-color: #ffe7b3;
+    background: linear-gradient(180deg, #8a2c2c 0%, #521515 100%);
+    border-color: #e09f5a;
+    color: #ffe7b3;
 }
 
+/* Grade de botões do menu de testes */
 .test-grid {
-display: grid;
-grid-template-columns: 1fr;
-gap: 8px;
-margin: 14px 0 18px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 12px 0 16px;
 }
 
 .test-grid .btn-medieval {
-margin: 0;
-padding: 11px 14px;
-font-size: 0.95rem;
+    margin: 0;
+    padding: 10px 12px;
+    font-size: 0.9rem;
 }
 
+/* --------------------------------------------------------------------------
+ * HUD (BARRA SUPERIOR E PAINEL DA PERGUNTA)
+ * -------------------------------------------------------------------------- */
 #hud-layer {
-position: absolute;
-inset: 0;
-pointer-events: none;
-z-index: 10;
-display: flex;
-flex-direction: column;
-justify-content: space-between;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .hud-top-bar {
-display: flex;
-flex-wrap: wrap;
-justify-content: space-between;
-align-items: center;
-gap: 8px;
-padding: 12px 18px;
-background: linear-gradient(180deg, rgba(20, 14, 12, 0.94) 0%, rgba(28, 20, 17, 0.85) 100%);
-border-bottom: 3px solid var(--gold-mid);
-box-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
-pointer-events: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: linear-gradient(180deg, rgba(20, 14, 12, 0.94) 0%, rgba(28, 20, 17, 0.85) 100%);
+    border-bottom: 3px solid var(--gold-mid);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
+    pointer-events: auto;
 }
 
 .hud-stat {
-display: flex;
-align-items: center;
-gap: 8px;
-background: rgba(10, 7, 6, 0.65);
-border: 2px solid var(--gold-dark);
-border-radius: 6px;
-padding: 6px 14px;
-font-size: clamp(0.85rem, 2.4vw, 1.1rem);
-font-weight: 700;
-color: var(--gold-light);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(10, 7, 6, 0.65);
+    border: 2px solid var(--gold-dark);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: clamp(0.8rem, 2.4vw, 1.1rem);
+    font-weight: 700;
+    color: var(--gold-light);
 }
 
 .hud-region-tag {
-background: linear-gradient(180deg, #3b271a 0%, #24160e 100%);
-border: 2px solid var(--gold-mid);
-border-radius: 6px;
-padding: 6px 16px;
-font-size: clamp(0.85rem, 2.4vw, 1.05rem);
-font-weight: 700;
-color: #f5dfb0;
-letter-spacing: 1px;
-text-transform: uppercase;
+    background: linear-gradient(180deg, #3b271a 0%, #24160e 100%);
+    border: 2px solid var(--gold-mid);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: clamp(0.8rem, 2.4vw, 1.05rem);
+    font-weight: 700;
+    color: #f5dfb0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
+/* Animação de pulso quando o tempo está acabando */
 .timer-urgent {
-color: #ff6b5b !important;
-border-color: #d94136 !important;
-animation: pulseUrgent 0.5s infinite alternate;
+    color: #ff6b5b !important;
+    border-color: #d94136 !important;
+    animation: pulseUrgent 0.5s infinite alternate;
 }
 
 @keyframes pulseUrgent {
-from { transform: scale(1); }
-to { transform: scale(1.06); }
+    from { transform: scale(1); }
+    to { transform: scale(1.06); }
 }
 
+/* Painel central da equação matemática */
 #question-banner {
-position: absolute;
-left: 50%;
-transform: translateX(-50%);
-background: linear-gradient(180deg, #2d1f17 0%, #1b120d 100%);
-border: 4px solid var(--gold-mid);
-box-shadow: inset 0 0 0 2px #4d3322, 0 10px 25px rgba(0, 0, 0, 0.88);
-border-radius: 10px;
-padding: 12px 28px;
-min-width: min(88vw, 380px);
-max-width: 92vw;
-text-align: center;
-pointer-events: auto;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #2d1f17 0%, #1b120d 100%);
+    border: 4px solid var(--gold-mid);
+    box-shadow:
+        inset 0 0 0 2px #4d3322,
+        0 10px 25px rgba(0, 0, 0, 0.88);
+    border-radius: 10px;
+    padding: 10px 22px;
+    min-width: min(88vw, 380px);
+    max-width: 92vw;
+    text-align: center;
+    pointer-events: auto;
+    transition: top 0.2s ease, opacity 0.25s ease;
 }
 
 .challenge-badge {
-display: inline-block;
-font-size: 0.72rem;
-font-weight: 700;
-letter-spacing: 1.5px;
-color: #ffd97d;
-background: #6b1d1d;
-border: 1px solid #d49b4b;
-padding: 2px 10px;
-border-radius: 4px;
-margin-bottom: 4px;
-text-transform: uppercase;
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #ffd97d;
+    background: #6b1d1d;
+    border: 1px solid #d49b4b;
+    padding: 2px 10px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
 }
 
 #question-text {
-font-family: 'Cinzel', serif;
-font-size: clamp(1.35rem, 4.2vw, 2.05rem);
-font-weight: 900;
-color: #fff6e0;
-text-shadow: 2px 2px 0 #000;
-letter-spacing: 1.5px;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.3rem, 4.2vw, 2.05rem);
+    font-weight: 900;
+    color: #fff6e0;
+    text-shadow: 2px 2px 0 #000;
+    letter-spacing: 1.5px;
 }
 
+/* Barra flutuante do modo de teste */
 #test-controls {
-position: absolute;
-top: 14px;
-left: 50%;
-transform: translateX(-50%);
-display: flex;
-align-items: center;
-gap: 12px;
-background: rgba(24, 16, 13, 0.92);
-border: 3px solid var(--gold-mid);
-border-radius: 8px;
-padding: 8px 18px;
-z-index: 15;
-pointer-events: auto;
-box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(24, 16, 13, 0.92);
+    border: 3px solid var(--gold-mid);
+    border-radius: 8px;
+    padding: 8px 14px;
+    z-index: 15;
+    pointer-events: auto;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
+    width: max-content;
+    max-width: 95vw;
 }
 
 #test-region-label {
-font-weight: 700;
-color: var(--gold-light);
-font-size: 1rem;
-letter-spacing: 1px;
+    font-weight: 700;
+    color: var(--gold-light);
+    font-size: clamp(0.8rem, 2.5vw, 1rem);
+    letter-spacing: 1px;
 }
 
 .btn-mini {
-background: linear-gradient(180deg, #6e4526, #3d2310);
-color: var(--gold-light);
-border: 2px solid var(--gold-mid);
-border-radius: 6px;
-padding: 6px 14px;
-font-family: 'Cinzel', serif;
-font-weight: 700;
-font-size: 0.85rem;
-cursor: pointer;
+    background: linear-gradient(180deg, #6e4526, #3d2310);
+    color: var(--gold-light);
+    border: 2px solid var(--gold-mid);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.btn-mini:hover {
+    filter: brightness(1.15);
 }
 
 #btn-audio-toggle {
-background: rgba(20, 14, 12, 0.85);
-border: 2px solid var(--gold-mid);
-color: var(--gold-light);
-border-radius: 6px;
-padding: 6px 12px;
-font-family: 'Cinzel', serif;
-font-size: 0.85rem;
-font-weight: 700;
-cursor: pointer;
+    background: rgba(20, 14, 12, 0.85);
+    border: 2px solid var(--gold-mid);
+    color: var(--gold-light);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
 }
 
+/* --------------------------------------------------------------------------
+ * TELA FINAL (GAME OVER / VITÓRIA)
+ * -------------------------------------------------------------------------- */
 .end-title {
-font-size: clamp(1.7rem, 5vw, 2.5rem);
-font-weight: 900;
-color: var(--gold-light);
-text-shadow: 2px 3px 0 #2b1404;
-margin-bottom: 12px;
-line-height: 1.25;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--gold-light);
+    text-shadow: 2px 3px 0 #2b1404;
+    margin-bottom: 12px;
+    line-height: 1.25;
 }
 
 .end-subtitle {
-font-family: 'MedievalSharp', cursive;
-font-size: clamp(1.05rem, 3vw, 1.3rem);
-color: #dfd0b6;
-margin-bottom: 18px;
+    font-family: 'MedievalSharp', cursive;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    color: #dfd0b6;
+    margin-bottom: 18px;
 }
 
 .end-score-box {
-background: rgba(0, 0, 0, 0.6);
-border: 2px solid var(--gold-mid);
-border-radius: 8px;
-padding: 12px 22px;
-font-size: 1.35rem;
-font-weight: 900;
-color: #ffe08a;
-margin-bottom: 22px;
-letter-spacing: 1px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid var(--gold-mid);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #ffe08a;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+/* --------------------------------------------------------------------------
+ * AJUSTES RESPONSIVOS PARA CELULARES (TELAS MENORES QUE 600px)
+ * -------------------------------------------------------------------------- */
+@media (max-width: 600px) {
+    .hud-top-bar {
+        justify-content: center;
+        padding: 8px 10px;
+        gap: 5px;
+    }
+
+    .medieval-panel {
+        padding: 18px 16px;
+    }
+
+    #question-banner {
+        padding: 8px 14px;
+        border-width: 3px;
+    }
 }

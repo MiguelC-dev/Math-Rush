@@ -1,14 +1,17 @@
+/**
+Arquivo responsável pelo audio do jogo
+ */
 class MedievalAudio {
     constructor() {
         this.ctx = null;
         this.muted = false;
         this.bgmTimer = null;
         this.bgmStep = 0;
-        this.currentMode = 'none';
-        this.intensity = 0;
-        this.isUrgentTempo = false;
+        this.currentMode = 'none'; // 'dungeon', 'victory', 'none'
+        this.intensity = 0; // 0 a 4 com base na região
     }
 
+    // Inicializa ou retoma o contexto de áudio (necessário no mobile após toque)
     init() {
         if (!this.ctx) {
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -19,6 +22,7 @@ class MedievalAudio {
         }
     }
 
+    // Liga ou desliga o som do jogo
     toggleMute() {
         this.muted = !this.muted;
         if (this.muted) {
@@ -29,6 +33,7 @@ class MedievalAudio {
         return this.muted;
     }
 
+    // Para a música de fundo atual
     stopMusic() {
         if (this.bgmTimer) {
             clearInterval(this.bgmTimer);
@@ -36,6 +41,7 @@ class MedievalAudio {
         }
     }
 
+    // Inicia a trilha sonora conforme o modo e a intensidade da fase
     startMusic(mode, intensity = 0) {
         this.init();
         this.currentMode = mode;
@@ -60,6 +66,7 @@ class MedievalAudio {
         }, tempoMs);
     }
 
+    // Acelera a música quando restam 3 segundos ou menos
     setUrgentTempo(urgent) {
         if (this.currentMode !== 'dungeon' || this.muted) return;
         if (this.isUrgentTempo === urgent) return;
@@ -77,6 +84,7 @@ class MedievalAudio {
         }, tempoMs);
     }
 
+    // Toca uma nota da música de exploração das masmorras
     _playDungeonStep(step, intensity) {
         const now = this.ctx.currentTime;
         const scale = [146.83, 164.81, 174.61, 196.00, 220.00, 246.94, 261.63, 293.66];
@@ -114,25 +122,79 @@ class MedievalAudio {
             bass.start(now);
             bass.stop(now + 0.86);
         }
+
+        if (intensity >= 3 && step % 2 === 0) {
+            const drum = this.ctx.createOscillator();
+            const dGain = this.ctx.createGain();
+            drum.type = 'sine';
+            drum.frequency.setValueAtTime(110, now);
+            drum.frequency.exponentialRampToValueAtTime(38, now + 0.12);
+            dGain.gain.setValueAtTime(0.06, now);
+            dGain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+            drum.connect(dGain);
+            dGain.connect(this.ctx.destination);
+            drum.start(now);
+            drum.stop(now + 0.14);
+        }
     }
 
+    // Toca a fanfarra alegre da tela de vitória
     _playVictoryStep(step) {
         const now = this.ctx.currentTime;
-        const melody = [392.00, 493.88, 587.33, 783.99, 659.25, 587.33, 659.25, 783.99];
+        const melody = [
+            392.00, 493.88, 587.33, 783.99,
+            659.25, 587.33, 659.25, 783.99,
+            587.33, 493.88, 523.25, 587.33,
+            493.88, 440.00, 392.00, 392.00
+        ];
         const freq = melody[step % melody.length];
 
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(freq, now);
+
         gain.gain.setValueAtTime(0.07, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.23);
+
+        if (step % 2 === 0) {
+            const harmony = this.ctx.createOscillator();
+            const hGain = this.ctx.createGain();
+            harmony.type = 'sine';
+            harmony.frequency.setValueAtTime(freq * 0.5, now);
+            hGain.gain.setValueAtTime(0.05, now);
+            hGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            harmony.connect(hGain);
+            hGain.connect(this.ctx.destination);
+            harmony.start(now);
+            harmony.stop(now + 0.36);
+        }
     }
 
+    // Som de passos
+    playStep() {
+        if (this.muted) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(95 + Math.random() * 20, now);
+        osc.frequency.exponentialRampToValueAtTime(42, now + 0.06);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.07);
+    }
+
+    // Som de porta abrindo
     playDoorOpen() {
         if (this.muted) return;
         this.init();
@@ -142,14 +204,23 @@ class MedievalAudio {
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(85, now);
         osc.frequency.linearRampToValueAtTime(145, now + 0.22);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.42);
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(380, now);
+
         gain.gain.setValueAtTime(0.14, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.44);
-        osc.connect(gain);
+
+        osc.connect(filter);
+        filter.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.45);
     }
 
+    // Som de porta quebrando
     playDoorBreak() {
         if (this.muted) return;
         this.init();
@@ -162,18 +233,27 @@ class MedievalAudio {
         }
         const noise = this.ctx.createBufferSource();
         noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(480, now);
+
         const gain = this.ctx.createGain();
         gain.gain.setValueAtTime(0.28, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.32);
-        noise.connect(gain);
+
+        noise.connect(filter);
+        filter.connect(gain);
         gain.connect(this.ctx.destination);
         noise.start(now);
     }
 
+    // Som de resposta certa
     playCorrect() {
         if (this.muted) return;
         this.init();
-        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, i) => {
             const now = this.ctx.currentTime + i * 0.065;
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
@@ -188,6 +268,7 @@ class MedievalAudio {
         });
     }
 
+    // Som de erro / perda de vida
     playWrong() {
         if (this.muted) return;
         this.init();
@@ -205,6 +286,25 @@ class MedievalAudio {
         osc.stop(now + 0.37);
     }
 
+    // Som de pulo de comemoração
+    playJump() {
+        if (this.muted) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.exponentialRampToValueAtTime(560, now + 0.18);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.19);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.2);
+    }
+
+    // Som de fogos de artifício na vitória
     playFirework() {
         if (this.muted) return;
         this.init();
@@ -213,14 +313,23 @@ class MedievalAudio {
         const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) {
-            data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.28));
+            const env = Math.exp(-i / (bufferSize * 0.28));
+            data[i] = (Math.random() * 2 - 1) * env * (Math.random() > 0.35 ? 1 : 0.2);
         }
         const noise = this.ctx.createBufferSource();
         noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(950 + Math.random() * 600, now);
+        filter.Q.setValueAtTime(1.2, now);
+
         const gain = this.ctx.createGain();
         gain.gain.setValueAtTime(0.22, now);
         gain.gain.exponentialRampToValueAtTime(0.005, now + 0.35);
-        noise.connect(gain);
+
+        noise.connect(filter);
+        filter.connect(gain);
         gain.connect(this.ctx.destination);
         noise.start(now);
     }
